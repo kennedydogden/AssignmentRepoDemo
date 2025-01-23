@@ -1,8 +1,9 @@
 My groupmembers are:
-- XXXX
-- XXXX
-- XXXX
-- XXXX
+- Kennedy Ogden
+- Mona Benabderrazak
+- Jacob Turner
+- Hrishita Sehrawat
+- Anika Makarla 
 
 
 ------------------ Fill in some information about your project under this ------------------
