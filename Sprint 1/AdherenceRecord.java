@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 public class AdherenceRecord {
     private String medicationName;
     private LocalDateTime timeTaken;
+    private String notes;
 
     public AdherenceRecord(String medicationName, LocalDateTime timeTaken) {
 
