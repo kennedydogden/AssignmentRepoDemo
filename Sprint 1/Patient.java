@@ -10,6 +10,8 @@ public class Patient{
     private Map<Boolean,AdherenceRecord> adherenceRecords=new HashMap<Boolean,AdherenceRecord>();
     private int missedDoses=0;
     private double adherencePercentage;
+    private HashSet <String> uniqueMedications =new HashSet<String>();
+
 
 
     //Constructors
@@ -25,14 +27,25 @@ public class Patient{
         this.age=age;
         this.email=email;
     }
+    /**
+     * Adds an adherence record for the patient. Updates the number of missed
+     * doses, the set of unique medications, and the adherence percentage.
+     * Prints a message if the patient has missed three or more doses.
+     * @param adherenceRecord the adherence record to add
+     */
     public void addAdherenceRecord(AdherenceRecord adherenceRecord){
         adherenceRecords.put(adherenceRecord.isTaken(), adherenceRecord);
+        uniqueMedications.add(adherenceRecord.getMedicationName());
         if(!adherenceRecord.isTaken()) {
             missedDoses++;
+        }
+        if(missedDoses>=3){
+            System.out.println("DOSE ADHERENCE ALERT");
         }
         adherencePercentage=(double)(adherenceRecords.size()-missedDoses)/adherenceRecords.size();
         DecimalFormat df = new DecimalFormat("##.##");
         adherencePercentage=Double.parseDouble(df.format(adherencePercentage));
+
     }
 
     /**
@@ -48,6 +61,9 @@ public class Patient{
      * @param firstName the new first name
      */
     public void setFirstName(String firstName) {
+        if(firstName.isEmpty() || !firstName.matches("^[a-zA-Z'-]{1,50}$")) {
+            throw new IllegalArgumentException("Invalid first name");
+        }
         this.firstName = firstName;
     }
 
@@ -64,6 +80,10 @@ public class Patient{
      * @param lastName the new last name
      */
     public void setLastName(String lastName) {
+        //Ensure last name is valid
+        if(lastName.isEmpty() || !lastName.matches("^[a-zA-Z'-]{1,50}$")) {
+            throw new IllegalArgumentException("Invalid last name");
+        }
         this.lastName = lastName;
     }
 
@@ -80,6 +100,10 @@ public class Patient{
      * @param age the new age
      */
     public void setAge(int age) {
+        //Ensure age is valid or throws exception
+        if(age<0){
+            throw new IllegalArgumentException("Invalid age");
+        }
         this.age = age;
     }
 
@@ -96,6 +120,10 @@ public class Patient{
      * @param email the new email
      */
     public void setEmail(String email) {
+        //Ensure email is valid and has a valid format
+        if(email==null|| email.isEmpty()||email.matches("^[^@]+@[^@]+\\.[^@]+$")){
+            throw new IllegalArgumentException("Invalid email");
+        }
         this.email = email;
     }
 
@@ -121,6 +149,9 @@ public class Patient{
      * @param missedDoses the new number of missed doses
      */
     public void setMissedDoses(int missedDoses) {
+        if(missedDoses<0){
+            throw new IllegalArgumentException("Invalid missed doses");
+        }
         this.missedDoses = missedDoses;
     }
 

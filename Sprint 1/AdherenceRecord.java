@@ -46,7 +46,9 @@ public class AdherenceRecord {
      * @param medicationName the name of the medication to set
      */
     public void setMedicationName(String medicationName) {
-        if(!medicationName.matches("[a-zA-Z]+") || medicationName==null||medicationName.trim().isEmpty()) throw new IllegalArgumentException("Invalid medication name (only letters and spaces)");
+        if(!medicationName.matches("[a-zA-Z]+") || medicationName==null||medicationName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Invalid medication name (only letters and spaces). Data not saved");
+        }
         this.medicationName = medicationName;
 
     }
@@ -82,7 +84,9 @@ public class AdherenceRecord {
      */
     public void setDosage(int dosage) {
         this.dosage = dosage;
-        if(dosage<0) throw new IllegalArgumentException("Invalid dosage");
+        if(dosage<0) {
+            throw new IllegalArgumentException("Invalid dosage. Dosage not saved");
+        }
         taken=dosage!=0;
     }
 
