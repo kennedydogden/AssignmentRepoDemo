@@ -1,3 +1,6 @@
+//Imports
+import com.sun.xml.internal.ws.util.StringUtils;
+import javafx.util.Pair;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -7,10 +10,13 @@ public class Patient{
     private String lastName;
     private int age;
     private String email;
+    //Record of adherence including whether the medication was taken or not
     private Map<Boolean,AdherenceRecord> adherenceRecords=new HashMap<Boolean,AdherenceRecord>();
     private int missedDoses=0;
     private double adherencePercentage;
-    private HashSet <String> uniqueMedications =new HashSet<String>();
+    //How many times the patient has been notified of too many missed doses (3 or more)
+    private int missedDoseNotis;
+    private MedicationSchedule schedule;
 
 
 
@@ -35,17 +41,27 @@ public class Patient{
      */
     public void addAdherenceRecord(AdherenceRecord adherenceRecord){
         adherenceRecords.put(adherenceRecord.isTaken(), adherenceRecord);
-        uniqueMedications.add(adherenceRecord.getMedicationName());
         if(!adherenceRecord.isTaken()) {
             missedDoses++;
         }
         if(missedDoses>=3){
             System.out.println("DOSE ADHERENCE ALERT");
+            missedDoseNotis++;
         }
+        //Calculate adherence percentage and format
         adherencePercentage=(double)(adherenceRecords.size()-missedDoses)/adherenceRecords.size();
         DecimalFormat df = new DecimalFormat("##.##");
         adherencePercentage=Double.parseDouble(df.format(adherencePercentage));
 
+    }
+    /**
+     * Adds a medication to the patient's schedule.
+     * @param medicationName the name of the medication
+     * @param timing the timing at which the medication should be taken
+     * @param dosage the dosage of the medication
+     */
+    public void addMedication(String medicationName, String timing, int dosage){
+        schedule.addMedication(medicationName,timing,dosage);
     }
 
     /**
@@ -80,7 +96,7 @@ public class Patient{
      * @param lastName the new last name
      */
     public void setLastName(String lastName) {
-        //Ensure last name is valid
+        //Ensure last name is valid and follows valid format
         if(lastName.isEmpty() || !lastName.matches("^[a-zA-Z'-]{1,50}$")) {
             throw new IllegalArgumentException("Invalid last name");
         }
@@ -161,5 +177,69 @@ public class Patient{
      */
     public double getAdherencePercentage() {
         return adherencePercentage;
+    }
+
+    /**
+     * Gets the number of missed dose notifications that have been sent to the patient
+     * @return the number of missed dose notifications
+     */
+    public int getMissedDoseNotis() {
+        return missedDoseNotis;
+    }
+
+    /**
+     * Retrieves the medication schedule for the patient.
+     * @return Patient's medication schedule
+     */
+    public MedicationSchedule getSchedule() {
+        return schedule;
+    }
+}
+
+class MedicationSchedule{
+
+    private HashMap<String,Pair<Frequency,Integer>> medications=new HashMap<String,Pair<Frequency,Integer>>();
+
+    public MedicationSchedule(String medicationName, String timing, int dosage){
+        this.addMedication(medicationName,timing,dosage);
+    }
+    public MedicationSchedule(){
+        this.medications=new HashMap<String,Pair<Frequency,Integer>>();
+    }
+
+    /**
+     * Adds a medication to the medication schedule. The medication name must be a single word
+     * consisting only of letters, and the timing must be either "daily" or "weekly". The dosage
+     * must be a positive integer.
+     * @param medicationName the name of the medication
+     * @param timing the timing at which the medication should be taken
+     * @param dosage the dosage of the medication
+     * @throws IllegalArgumentException if the medication name, timing, or dosage is invalid
+     */
+    public void addMedication(String medicationName, String timing, int dosage){
+        if(medicationName.isEmpty()||medicationName==null||!medicationName.matches("[a-zA-Z]+")) {
+            throw new IllegalArgumentException("Invalid medication name");
+        }
+        if(timing.equalsIgnoreCase("daily")||timing.equalsIgnoreCase("weekly")){
+            Frequency frequency = Frequency.valueOf(timing.toUpperCase());
+        }
+        if(timing.isEmpty()||timing==null||!timing.matches("[a-zA-Z]+")) {
+            throw new IllegalArgumentException("Invalid timing format or is empty");
+        }
+        if(dosage<0){
+            throw new IllegalArgumentException("Invalid dosage");
+        }
+        medications.put(medicationName,new Pair<Frequency,Integer>(Frequency.valueOf(timing.toUpperCase()),dosage));
+    }
+
+}
+enum Frequency{
+    DAILY,WEEKLY;
+    /**
+     * Returns the name of the frequency with the first letter capitalized.
+     * @return the capitalized name of the frequency
+     */
+    public String toString(){
+        return StringUtils.capitalize(this.name());
     }
 }

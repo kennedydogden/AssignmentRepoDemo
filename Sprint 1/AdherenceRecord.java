@@ -2,12 +2,12 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 /**
- * Represents a single instance of taking a medication on time
+ * Represents a single instance of taking a medication (or if not taken)
  */
 public class AdherenceRecord {
     /**
      * medication name: name of medication
-     * timeTaken: time medication was taken
+     * timeTaken: time medication was taken or time when it was not taken
      * dosage: amount of medication in mg. If zero, medication was not taken
      * taken: true if medication was taken, false otherwise (based on dosage)
      */
