@@ -1,7 +1,6 @@
 //Imports
 import com.sun.xml.internal.ws.util.StringUtils;
 import javafx.util.Pair;
-import java.text.DecimalFormat;
 import java.util.*;
 
 public class Patient{
@@ -46,12 +45,12 @@ public class Patient{
         }
         if(missedDoses>=3){
             System.out.println("DOSE ADHERENCE ALERT");
+            //Counts how many times a patient has been notified
             missedDoseNotis++;
         }
-        //Calculate adherence percentage and format
+        //Calculate adherence percentage and format (2 decimal places)
         adherencePercentage=(double)(adherenceRecords.size()-missedDoses)/adherenceRecords.size();
-        DecimalFormat df = new DecimalFormat("##.##");
-        adherencePercentage=Double.parseDouble(df.format(adherencePercentage));
+        adherencePercentage=Double.parseDouble(String.format("%.2f", adherencePercentage));
 
     }
     /**
@@ -77,6 +76,7 @@ public class Patient{
      * @param firstName the new first name
      */
     public void setFirstName(String firstName) {
+        //Ensures first name is valid and follows and valid format (only letters and hyphens)
         if(firstName.isEmpty() || !firstName.matches("^[a-zA-Z'-]{1,50}$")) {
             throw new IllegalArgumentException("Invalid first name");
         }
@@ -96,7 +96,7 @@ public class Patient{
      * @param lastName the new last name
      */
     public void setLastName(String lastName) {
-        //Ensure last name is valid and follows valid format
+        //Ensure last name is valid and follows valid format (only letters and hyphens)
         if(lastName.isEmpty() || !lastName.matches("^[a-zA-Z'-]{1,50}$")) {
             throw new IllegalArgumentException("Invalid last name");
         }
@@ -136,7 +136,8 @@ public class Patient{
      * @param email the new email
      */
     public void setEmail(String email) {
-        //Ensure email is valid and has a valid format
+        //Ensure email is valid and has a simple valid format
+        // (one char[isn't @] then a @ then at least one char[isn't @] then a . then at least one char[isn't @])
         if(email==null|| email.isEmpty()||email.matches("^[^@]+@[^@]+\\.[^@]+$")){
             throw new IllegalArgumentException("Invalid email");
         }
@@ -198,11 +199,14 @@ public class Patient{
 
 class MedicationSchedule{
 
+    //Map to hold medication name with timing and dosage in a Pair
     private HashMap<String,Pair<Frequency,Integer>> medications=new HashMap<String,Pair<Frequency,Integer>>();
 
+    //Initializes Medicine Schedule with one medication
     public MedicationSchedule(String medicationName, String timing, int dosage){
         this.addMedication(medicationName,timing,dosage);
     }
+    //Initializes Medicine Schedule with no medications
     public MedicationSchedule(){
         this.medications=new HashMap<String,Pair<Frequency,Integer>>();
     }
@@ -229,6 +233,7 @@ class MedicationSchedule{
         if(dosage<0){
             throw new IllegalArgumentException("Invalid dosage");
         }
+        //Add medication using params
         medications.put(medicationName,new Pair<Frequency,Integer>(Frequency.valueOf(timing.toUpperCase()),dosage));
     }
 

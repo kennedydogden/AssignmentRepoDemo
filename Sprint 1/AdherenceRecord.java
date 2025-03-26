@@ -46,7 +46,7 @@ public class AdherenceRecord {
      * @param medicationName the name of the medication to set
      */
     public void setMedicationName(String medicationName) {
-        if(!medicationName.matches("[a-zA-Z]+") || medicationName==null||medicationName.trim().isEmpty()) {
+        if(!medicationName.matches("[a-zA-Z]+") || medicationName==null||medicationName.isEmpty()) {
             throw new IllegalArgumentException("Invalid medication name (only letters and spaces). Data not saved");
         }
         this.medicationName = medicationName;
@@ -66,6 +66,7 @@ public class AdherenceRecord {
      * @param timeTaken the time at which the medication was taken
      */
     public void setTimeTaken(LocalDateTime timeTaken) {
+        //Removes seconds from timeTaken
         this.timeTaken = timeTaken.truncatedTo(ChronoUnit.SECONDS);
     }
 
