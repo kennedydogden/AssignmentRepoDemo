@@ -24,13 +24,14 @@ public class Patient{
         this.firstName=firstName;
         this.lastName=lastName;
         this.age=age;
-
+        schedule=new MedicationSchedule();
     }
     public Patient(String firstName,String lastName, int age, String email){
         this.firstName=firstName;
         this.lastName=lastName;
         this.age=age;
         this.email=email;
+        schedule = new MedicationSchedule();
     }
     /**
      * Adds an adherence record for the patient. Updates the number of missed
@@ -49,7 +50,7 @@ public class Patient{
             missedDoseNotis++;
         }
         //Calculate adherence percentage and format (2 decimal places)
-        adherencePercentage=(double)(adherenceRecords.size()-missedDoses)/adherenceRecords.size();
+        adherencePercentage=(double)(adherenceRecords.size()-missedDoses)/adherenceRecords.size()*100;
         adherencePercentage=Double.parseDouble(String.format("%.2f", adherencePercentage));
 
     }
@@ -77,7 +78,7 @@ public class Patient{
      */
     public void setFirstName(String firstName) {
         //Ensures first name is valid and follows and valid format (only letters and hyphens)
-        if(firstName.isEmpty() || !firstName.matches("^[a-zA-Z'-]{1,50}$")) {
+        if(firstName.isEmpty() || firstName==null) {
             throw new IllegalArgumentException("Invalid first name");
         }
         this.firstName = firstName;
@@ -216,18 +217,18 @@ class MedicationSchedule{
      * consisting only of letters, and the timing must be either "daily" or "weekly". The dosage
      * must be a positive integer.
      * @param medicationName the name of the medication
-     * @param timing the timing at which the medication should be taken
+     * @param timing how often the medicine is to be taken (daily or weekly)
      * @param dosage the dosage of the medication
      * @throws IllegalArgumentException if the medication name, timing, or dosage is invalid
      */
     public void addMedication(String medicationName, String timing, int dosage){
-        if(medicationName.isEmpty()||medicationName==null||!medicationName.matches("[a-zA-Z]+")) {
+        if(medicationName==null||medicationName.isEmpty()||!medicationName.matches("[a-zA-Z]+")) {
             throw new IllegalArgumentException("Invalid medication name");
         }
         if(timing.equalsIgnoreCase("daily")||timing.equalsIgnoreCase("weekly")){
             Frequency frequency = Frequency.valueOf(timing.toUpperCase());
         }
-        if(timing.isEmpty()||timing==null||!timing.matches("[a-zA-Z]+")) {
+        if(timing==null||timing.isEmpty()||!timing.matches("[a-zA-Z]+")) {
             throw new IllegalArgumentException("Invalid timing format or is empty");
         }
         if(dosage<0){

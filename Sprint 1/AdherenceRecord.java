@@ -26,6 +26,7 @@ public class AdherenceRecord {
         if(dosage<0) {
             throw new IllegalArgumentException("Invalid dosage");
         }
+
         this.setMedicationName(medicationName);
         //Record current time without seconds
         this.setTimeTaken(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
