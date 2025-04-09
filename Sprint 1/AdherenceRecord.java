@@ -31,7 +31,6 @@ public class AdherenceRecord {
         //Record current time without seconds
         this.setTimeTaken(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         this.setDosage(dosage);
-        setTaken(dosage!=0);
     }
 
     /**
@@ -47,7 +46,7 @@ public class AdherenceRecord {
      * @param medicationName the name of the medication to set
      */
     public void setMedicationName(String medicationName) {
-        if(!medicationName.matches("[a-zA-Z]+") || medicationName==null||medicationName.isEmpty()) {
+        if(medicationName==null||!medicationName.matches("[a-zA-Z\\s]+")||medicationName.isEmpty()) {
             throw new IllegalArgumentException("Invalid medication name (only letters and spaces). Data not saved");
         }
         this.medicationName = medicationName;

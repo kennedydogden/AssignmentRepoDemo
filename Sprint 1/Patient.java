@@ -35,7 +35,7 @@ public class Patient{
     }
     /**
      * Adds an adherence record for the patient. Updates the number of missed
-     * doses, the set of unique medications, and the adherence percentage.
+     * doses and the adherence percentage.
      * Prints a message if the patient has missed three or more doses.
      * @param adherenceRecord the adherence record to add
      */
@@ -78,7 +78,7 @@ public class Patient{
      */
     public void setFirstName(String firstName) {
         //Ensures first name is valid and follows and valid format (only letters and hyphens)
-        if(firstName.isEmpty()) {
+        if(firstName.isEmpty()|| !firstName.matches("^[a-zA-Z'-]{1,50}$")) {
             throw new IllegalArgumentException("Invalid first name");
         }
         this.firstName = firstName;
@@ -139,7 +139,7 @@ public class Patient{
     public void setEmail(String email) {
         //Ensure email is valid and has a simple valid format
         // (one char[isn't @] then a @ then at least one char[isn't @] then a . then at least one char[isn't @])
-        if(email==null|| email.isEmpty()||email.matches("^[^@]+@[^@]+\\.[^@]+$")){
+        if(email==null|| email.isEmpty()||!email.matches("^[^@]+@[^@]+\\.[^@]+$")){
             throw new IllegalArgumentException("Invalid email");
         }
         this.email = email;
@@ -213,8 +213,8 @@ class MedicationSchedule{
     }
 
     /**
-     * Adds a medication to the medication schedule. The medication name must be a single word
-     * consisting only of letters, and the timing must be either "daily" or "weekly". The dosage
+     * Adds a medication to the medication schedule. The medication name must
+     * consist only of letters, and the timing must be either "daily" or "weekly". The dosage
      * must be a positive integer.
      * @param medicationName the name of the medication
      * @param timing how often the medicine is to be taken (daily or weekly)
@@ -222,7 +222,7 @@ class MedicationSchedule{
      * @throws IllegalArgumentException if the medication name, timing, or dosage is invalid
      */
     public void addMedication(String medicationName, String timing, int dosage) {
-        if (medicationName == null || medicationName.isEmpty() || !medicationName.matches("[a-zA-Z]+")) {
+        if (medicationName == null || medicationName.isEmpty() || !medicationName.matches("[a-zA-Z\\s]+")) {
             throw new IllegalArgumentException("Invalid medication name");
         }
         Frequency frequency = null;
