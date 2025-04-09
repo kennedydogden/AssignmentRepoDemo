@@ -9,8 +9,8 @@ public class Patient{
     private String lastName;
     private int age;
     private String email;
-    //Record of adherence including whether the medication was taken or not
-    private Map<Boolean,AdherenceRecord> adherenceRecords=new HashMap<Boolean,AdherenceRecord>();
+    //Record of patient's adherence
+    private ArrayList<AdherenceRecord> adherenceRecords= new ArrayList<>();
     private int missedDoses=0;
     private double adherencePercentage;
     //How many times the patient has been notified of too many missed doses (3 or more)
@@ -40,7 +40,7 @@ public class Patient{
      * @param adherenceRecord the adherence record to add
      */
     public void addAdherenceRecord(AdherenceRecord adherenceRecord){
-        adherenceRecords.put(adherenceRecord.isTaken(), adherenceRecord);
+        adherenceRecords.add(adherenceRecord);
         if(!adherenceRecord.isTaken()) {
             missedDoses++;
         }
@@ -78,7 +78,7 @@ public class Patient{
      */
     public void setFirstName(String firstName) {
         //Ensures first name is valid and follows and valid format (only letters and hyphens)
-        if(firstName.isEmpty() || firstName==null) {
+        if(firstName.isEmpty()) {
             throw new IllegalArgumentException("Invalid first name");
         }
         this.firstName = firstName;
@@ -149,7 +149,7 @@ public class Patient{
      * Gets the adherence records of the patient
      * @return the adherence records
      */
-    public Map<Boolean, AdherenceRecord> getAdherenceRecords() {
+    public ArrayList<AdherenceRecord> getAdherenceRecords() {
         return adherenceRecords;
     }
 
@@ -201,7 +201,7 @@ public class Patient{
 class MedicationSchedule{
 
     //Map to hold medication name with timing and dosage in a Pair
-    private HashMap<String,Pair<Frequency,Integer>> medications=new HashMap<String,Pair<Frequency,Integer>>();
+    private HashMap<String,Pair<Frequency,Integer>> medications= new HashMap<>();
 
     //Initializes Medicine Schedule with one medication
     public MedicationSchedule(String medicationName, String timing, int dosage){
@@ -209,7 +209,7 @@ class MedicationSchedule{
     }
     //Initializes Medicine Schedule with no medications
     public MedicationSchedule(){
-        this.medications=new HashMap<String,Pair<Frequency,Integer>>();
+        this.medications= new HashMap<>();
     }
 
     /**
@@ -221,21 +221,22 @@ class MedicationSchedule{
      * @param dosage the dosage of the medication
      * @throws IllegalArgumentException if the medication name, timing, or dosage is invalid
      */
-    public void addMedication(String medicationName, String timing, int dosage){
-        if(medicationName==null||medicationName.isEmpty()||!medicationName.matches("[a-zA-Z]+")) {
+    public void addMedication(String medicationName, String timing, int dosage) {
+        if (medicationName == null || medicationName.isEmpty() || !medicationName.matches("[a-zA-Z]+")) {
             throw new IllegalArgumentException("Invalid medication name");
         }
-        if(timing.equalsIgnoreCase("daily")||timing.equalsIgnoreCase("weekly")){
-            Frequency frequency = Frequency.valueOf(timing.toUpperCase());
+        Frequency frequency = null;
+        if (timing.equalsIgnoreCase("daily") || timing.equalsIgnoreCase("weekly")) {
+            frequency = Frequency.valueOf(timing.toUpperCase());
         }
-        if(timing==null||timing.isEmpty()||!timing.matches("[a-zA-Z]+")) {
+        if (timing.isEmpty() || !timing.matches("[a-zA-Z]+")) {
             throw new IllegalArgumentException("Invalid timing format or is empty");
         }
-        if(dosage<0){
+        if (dosage < 0) {
             throw new IllegalArgumentException("Invalid dosage");
         }
         //Add medication using params
-        medications.put(medicationName,new Pair<Frequency,Integer>(Frequency.valueOf(timing.toUpperCase()),dosage));
+        medications.put(medicationName, new Pair<>(frequency, dosage));
     }
 
 }

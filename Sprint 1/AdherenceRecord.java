@@ -85,10 +85,11 @@ public class AdherenceRecord {
      * @param dosage the amount of medication in mg
      */
     public void setDosage(int dosage) {
-        this.dosage = dosage;
         if(dosage<0) {
             throw new IllegalArgumentException("Invalid dosage. Dosage not saved");
         }
+        this.dosage = dosage;
+
         taken=dosage!=0;
     }
 
