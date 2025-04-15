@@ -1,7 +1,14 @@
 //Imports
 import com.sun.xml.internal.ws.util.StringUtils;
 import javafx.util.Pair;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
+import java.sql.Connection;
 
 public class Patient{
     //Instance vars
@@ -16,6 +23,8 @@ public class Patient{
     //How many times the patient has been notified of too many missed doses (3 or more)
     private int missedDoseNotis;
     private MedicationSchedule schedule;
+    //Connection to mysql database
+    private Connection db = initializeDatabase();
 
 
 
@@ -32,7 +41,34 @@ public class Patient{
         this.age=age;
         this.email=email;
         schedule = new MedicationSchedule();
+
     }
+
+    /**
+     * Initializes the database connection.
+     * Must have a file called application.properties in .idea (or change filepath)
+     * Establishes a connection to the database, and executes a USE statement to select the adherencedb database.
+     * @return the database connection
+     * @throws RuntimeException if there is a problem with the application properties file/doesn't exist, or if there is a problem connecting to the database
+     */
+    public static Connection initializeDatabase(){
+        Properties properties = new Properties();
+        try{
+            properties.load(new FileInputStream(".idea/application.properties"));
+        } catch (IOException e) {
+            throw new RuntimeException("Problem with application properties file/doesn't exist");
+        }
+        try{
+            Connection connection = DriverManager.getConnection(properties.getProperty("url"),properties.getProperty("user"), properties.getProperty("sqlpwd"));
+            Statement statement = connection.createStatement();
+            statement.execute("USE adherencedb");
+            return connection;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Adds an adherence record for the patient. Updates the number of missed
      * doses and the adherence percentage.
