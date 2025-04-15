@@ -62,6 +62,9 @@ public class Patient{
             Connection connection = DriverManager.getConnection(properties.getProperty("url"),properties.getProperty("user"), properties.getProperty("sqlpwd"));
             Statement statement = connection.createStatement();
             statement.execute("USE adherencedb");
+            //Creates necessary tables to handle incoming data from the program
+            statement.execute("CREATE TABLE IF NOT EXISTS Patients(id INT AUTO_INCREMENT PRIMARY KEY, firstName VARCHAR(50), lastName VARCHAR(50), age INT, email VARCHAR(100));");
+            statement.execute("CREATE TABLE IF NOT EXISTS AdherenceRecords(id INT AUTO_INCREMENT PRIMARY KEY, patientId INT, medicationName VARCHAR(50), dosage INT, taken BOOLEAN, createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(patientId) REFERENCES Patients(id) ON DELETE CASCADE);");
             return connection;
 
         } catch (SQLException e) {

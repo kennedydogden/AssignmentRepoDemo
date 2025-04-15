@@ -29,8 +29,9 @@ public class AdherenceRecord {
 
         this.setMedicationName(medicationName);
         //Record current time without seconds
-        this.setTimeTaken(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+        this.setTimeTaken(LocalDateTime.now());
         this.setDosage(dosage);
+
     }
 
     /**
