@@ -4,11 +4,8 @@ import javafx.util.Pair;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
-import java.sql.Connection;
 
 public class Patient{
     //Instance vars
@@ -25,29 +22,26 @@ public class Patient{
     private MedicationSchedule schedule;
     //Connection to mysql database
     private Connection db = initializeDatabase();
-
+    private int id;
 
 
     //Constructors
-    public Patient(String firstName, String lastName, int age){
-        this.firstName=firstName;
-        this.lastName=lastName;
-        this.age=age;
-        schedule=new MedicationSchedule();
-    }
+
     public Patient(String firstName,String lastName, int age, String email){
-        this.firstName=firstName;
-        this.lastName=lastName;
-        this.age=age;
-        this.email=email;
+        setFirstName(firstName);
+        setLastName(lastName);
+        setAge(age);
+        setEmail(email);
         schedule = new MedicationSchedule();
+        insertPatientIntoDatabase();
 
     }
 
     /**
      * Initializes the database connection.
      * Must have a file called application.properties in .idea (or change filepath)
-     * Establishes a connection to the database, and executes a USE statement to select the adherencedb database.
+     * Establishes a connection to the database
+     * Creates necessary tables for data insertion
      * @return the database connection
      * @throws RuntimeException if there is a problem with the application properties file/doesn't exist, or if there is a problem connecting to the database
      */
@@ -62,10 +56,49 @@ public class Patient{
             Connection connection = DriverManager.getConnection(properties.getProperty("url"),properties.getProperty("user"), properties.getProperty("sqlpwd"));
             Statement statement = connection.createStatement();
             statement.execute("USE adherencedb");
+            //Creates necessary tables to handle incoming data from the program
+            statement.execute("CREATE TABLE IF NOT EXISTS Patients(id INT AUTO_INCREMENT PRIMARY KEY, firstName VARCHAR(50), lastName VARCHAR(50), age INT, email VARCHAR(100));");
+            statement.execute("CREATE TABLE IF NOT EXISTS AdherenceRecords(id INT AUTO_INCREMENT PRIMARY KEY, patientId INT, medicationName VARCHAR(50), dosage INT, taken BOOLEAN, timeTaken DATETIME NOT NULL, FOREIGN KEY(patientId) REFERENCES Patients(id) ON DELETE CASCADE);");
             return connection;
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Inserts the patient into the database, and sets the patient's id to the
+     * auto-generated id.
+     * @throws RuntimeException if there is a problem with inserting the patient
+     * into the database
+     */
+    private void insertPatientIntoDatabase() {
+        try {
+            //Ensures patient doesn't already exist in db. Throws exception if it does
+            String checkPatientSQL = "SELECT COUNT(*) FROM Patients WHERE firstName = ? AND lastName = ? AND age = ?";
+            PreparedStatement checkStatement = db.prepareStatement(checkPatientSQL);
+            checkStatement.setString(1, this.firstName);
+            checkStatement.setString(2, this.lastName);
+            checkStatement.setInt(3, this.age);
+            ResultSet checkSet = checkStatement.executeQuery();
+            if (checkSet.next() && checkSet.getInt(1)>0) {
+                throw new RuntimeException("Patient already exists in database");
+            }
+            //Inserts patient
+            String insertPatientSQL = "INSERT INTO Patients (firstName, lastName, age, email) VALUES (?, ?, ?, ?)";
+            PreparedStatement pstmt = db.prepareStatement(insertPatientSQL, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, this.firstName);
+            pstmt.setString(2, this.lastName);
+            pstmt.setInt(3, this.age);
+            pstmt.setString(4, this.email);
+            pstmt.executeUpdate();
+            //Gets auto-generated id and sets to id field
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                this.id = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Issue with inserting patient into database (auto-generated id not gathered correctly)");
         }
     }
 
@@ -84,6 +117,18 @@ public class Patient{
             System.out.println("DOSE ADHERENCE ALERT");
             //Counts how many times a patient has been notified
             missedDoseNotis++;
+        }
+        String insertAdherenceRecordSQL = "INSERT INTO AdherenceRecords (patientId, medicationName, dosage, taken, timeTaken) VALUES (?, ?, ?, ?, ?)";
+        try {
+            PreparedStatement pstmt = db.prepareStatement(insertAdherenceRecordSQL);
+            pstmt.setInt(1, this.id);
+            pstmt.setString(2, adherenceRecord.getMedicationName());
+            pstmt.setInt(3, adherenceRecord.getDosage());
+            pstmt.setBoolean(4, adherenceRecord.isTaken());
+            pstmt.setTimestamp(5, Timestamp.valueOf(adherenceRecord.getTimeTaken()));
+            pstmt.executeUpdate();
+        }catch(SQLException e){
+            throw new RuntimeException("Issue with inserting adherence record into database");
         }
         //Calculate adherence percentage and format (2 decimal places)
         adherencePercentage=(double)(adherenceRecords.size()-missedDoses)/adherenceRecords.size()*100;
