@@ -68,7 +68,7 @@ public class AdherenceRecord {
      */
     public void setTimeTaken(LocalDateTime timeTaken) {
         //Removes seconds from timeTaken
-        this.timeTaken = timeTaken.truncatedTo(ChronoUnit.SECONDS);
+        this.timeTaken = timeTaken.truncatedTo(ChronoUnit.MINUTES);
     }
 
     /**
