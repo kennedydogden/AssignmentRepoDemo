@@ -1,5 +1,7 @@
+package com.medicationadherence.model;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+
 
 /**
  * Represents a single instance of taking a medication (or if not taken)
