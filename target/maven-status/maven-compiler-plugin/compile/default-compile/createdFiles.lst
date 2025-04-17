@@ -1,6 +1,0 @@
-com\medicationadherence\controller\PatientController.class
-com\medicationadherence\controller\AdherenceRecordRequest.class
-com\medicationadherence\model\Patient.class
-com\medicationadherence\Application.class
-com\medicationadherence\controller\PatientRequest.class
-com\medicationadherence\model\AdherenceRecord.class
