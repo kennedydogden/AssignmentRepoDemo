@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Adherence Record - Patient Management System</title>
-    <!-- Link to our stylesheet -->
+    <!-- Link to stylesheet -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -29,7 +29,6 @@
         </div>
         
         <!-- Adherence record form -->
-        <!-- The form action will be set by JavaScript based on selected patient -->
         <form id="adherenceForm" class="input-form">
             <!-- Medication name field -->
             <div class="form-group">
@@ -62,9 +61,9 @@
         <div id="message" class="message"></div>
     </div>
 
-    <!-- JavaScript for form handling and patient loading -->
+    <!-- form handling and patient loading -->
     <script>
-        // Get DOM elements
+        // Get elements
         const patientSelect = document.getElementById('patientSelect');
         const adherenceForm = document.getElementById('adherenceForm');
         const messageDiv = document.getElementById('message');
