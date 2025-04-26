@@ -132,14 +132,30 @@ class PatientRequest {
     private String email;
 
     // Getters and setters
-    public String getFirstName() { return firstName; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
-    public int getAge() { return age; }
-    public void setAge(int age) { this.age = age; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getFirstName() { 
+        return firstName; 
+    }
+    public void setFirstName(String firstName) { 
+        this.firstName = firstName; 
+    }
+    public String getLastName() { 
+        return lastName; 
+    }
+    public void setLastName(String lastName) { 
+        this.lastName = lastName; 
+    }
+    public int getAge() { 
+        return age; 
+    }
+    public void setAge(int age) { 
+        this.age = age; 
+    }
+    public String getEmail() { 
+        return email; 
+    }
+    public void setEmail(String email) { 
+        this.email = email; 
+    }
 }
 
 /**
@@ -151,8 +167,15 @@ class AdherenceRecordRequest {
     private int dosage;
 
     // Getters and setters
-    public String getMedicationName() { return medicationName; }
-    public void setMedicationName(String medicationName) { this.medicationName = medicationName; }
-    public int getDosage() { return dosage; }
-    public void setDosage(int dosage) { this.dosage = dosage; }
+    public String getMedicationName() {
+         return medicationName; 
+        }
+    public void setMedicationName(String medicationName) { 
+        this.medicationName = medicationName; }
+    public int getDosage() { 
+        return dosage; 
+    }
+    public void setDosage(int dosage) {
+        this.dosage = dosage; 
+    }
 } 

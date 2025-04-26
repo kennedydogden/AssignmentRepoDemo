@@ -1,4 +1,4 @@
-/* Reset default styles */
+
 * {
     margin: 0;
     padding: 0;
@@ -118,7 +118,7 @@ input:focus, select:focus {
     border: 1px solid #ebccd1;
 }
 
-/* Responsive design */
+
 @media (max-width: 600px) {
     .container {
         padding: 1rem;
