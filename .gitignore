@@ -1,15 +1,12 @@
-# Files to exclude from the repository
+
 target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .idea/
-*.iws
-*.iml
-*.ipr
-.vscode/
 .settings/
 .classpath
 .project
+*.properties
 
 # Compiled class files
 *.class

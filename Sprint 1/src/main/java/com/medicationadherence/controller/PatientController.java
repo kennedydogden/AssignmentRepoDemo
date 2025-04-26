@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.stream.Collectors;
 
 /**
- * REST Controller for managing patient-related operations.
+ * REST CTRL for managing patient-related operations.
  * Handles patient creation, adherence record management, and data retrieval.
  */
 @RestController
@@ -122,7 +122,7 @@ public class PatientController {
 }
 
 /**
- * Data Transfer Object for patient creation requests.
+ * Object for patient creation requests.
  * Contains basic patient information needed to create a new patient.
  */
 class PatientRequest {
@@ -143,7 +143,7 @@ class PatientRequest {
 }
 
 /**
- * Data Transfer Object for adherence record creation requests.
+ * Object for adherence record creation requests.
  * Contains medication details needed to create a new adherence record.
  */
 class AdherenceRecordRequest {

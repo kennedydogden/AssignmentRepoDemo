@@ -51,6 +51,7 @@
                 <thead>
                     <tr>
                         <th>Date</th>
+                        <th>Time</th>
                         <th>Medication</th>
                         <th>Dosage</th>
                     </tr>
@@ -114,18 +115,18 @@
 
                 records.forEach(record => {
                     const row = tableBody.insertRow();
-                    const dateCell = row.insertCell(0);
-                    const medicationCell = row.insertCell(1);
-                    const dosageCell = row.insertCell(2);
+                    
+                    const dateTime = new Date(record.date);
 
-                    dateCell.textContent = new Date(record.date).toLocaleDateString();
-                    medicationCell.textContent = record.medicationName;
-                    dosageCell.textContent = record.dosage;
+                    row.insertCell(0).textContent = dateTime.toLocaleDateString();
+                    row.insertCell(1).textContent = dateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    row.insertCell(2).textContent = record.medicationName || 'N/A';
+                    row.insertCell(3).textContent = record.dosage || 'N/A';
                 });
 
                 table.style.display = 'table';
                 noRecords.style.display = 'none';
-            } catch (error) {
+            } catch (error) { //catch error
                 console.error('Error loading adherence records:', error);
                 alert('Failed to load adherence records. Please try again later.');
             }

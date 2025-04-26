@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Management System</title>
-    <!-- Link to our stylesheet -->
+    <!-- Link to stylesheet -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -20,7 +20,6 @@
         <h1>Add New Patient</h1>
         
         <!-- Patient creation form -->
-        <!-- The form action should point to your Java backend endpoint -->
         <form action="/api/patients" method="POST" class="input-form">
             <!-- First Name field -->
             <div class="form-group">
@@ -71,11 +70,11 @@
             <button type="submit" class="submit-btn">Add Patient</button>
         </form>
 
-        <!-- Success/Error message container -->
+        
         <div id="message" class="message"></div>
     </div>
 
-    <!-- Simple JavaScript for form submission feedback -->
+    <!-- Form submission feedback -->
     <script>
         // Get the form element
         const form = document.querySelector('form');
