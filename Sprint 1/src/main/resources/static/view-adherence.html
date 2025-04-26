@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Adherence Records</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .no-records {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-menu">
+        <a href="index.html">Add Patient</a>
+        <a href="adherence.html">Add Adherence Record</a>
+        <a href="view-adherence.html" class="active">View Adherence Records</a>
+    </nav>
+
+    <div class="container">
+        <h1>View Adherence Records</h1>
+        
+        <div class="form-group">
+            <label for="patientSelect">Select Patient:</label>
+            <select id="patientSelect" required>
+                <option value="">Choose a patient...</option>
+            </select>
+        </div>
+
+        <div id="recordsContainer">
+            <table id="adherenceTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Medication</th>
+                        <th>Dosage</th>
+                    </tr>
+                </thead>
+                <tbody id="adherenceTableBody">
+                </tbody>
+            </table>
+            <div id="noRecords" class="no-records" style="display: none;">
+                No adherence records found for this patient.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load patients when the page loads
+        document.addEventListener('DOMContentLoaded', loadPatients);
+
+        // Function to load patients into the dropdown
+        async function loadPatients() {
+            try {
+                const response = await fetch('/api/patients');
+                const patients = await response.json();
+                
+                const patientSelect = document.getElementById('patientSelect');
+                patients.forEach(patient => {
+                    const option = document.createElement('option');
+                    option.value = patient.id;
+                    option.textContent = `${patient.firstName} ${patient.lastName}`;
+                    patientSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading patients:', error);
+                alert('Failed to load patients. Please try again later.');
+            }
+        }
+
+        // Load adherence records when a patient is selected
+        document.getElementById('patientSelect').addEventListener('change', async function() {
+            const patientId = this.value;
+            if (!patientId) {
+                document.getElementById('adherenceTable').style.display = 'none';
+                document.getElementById('noRecords').style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/adherence/${patientId}`);
+                const records = await response.json();
+                
+                const tableBody = document.getElementById('adherenceTableBody');
+                const table = document.getElementById('adherenceTable');
+                const noRecords = document.getElementById('noRecords');
+                
+                tableBody.innerHTML = ''; // Clear existing records
+
+                if (records.length === 0) {
+                    table.style.display = 'none';
+                    noRecords.style.display = 'block';
+                    return;
+                }
+
+                records.forEach(record => {
+                    const row = tableBody.insertRow();
+                    
+                    const dateTime = new Date(record.date);
+
+                    row.insertCell(0).textContent = dateTime.toLocaleDateString();
+                    row.insertCell(1).textContent = dateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    row.insertCell(2).textContent = record.medicationName || 'N/A';
+                    row.insertCell(3).textContent = record.dosage || 'N/A';
+                });
+
+                table.style.display = 'table';
+                noRecords.style.display = 'none';
+            } catch (error) { //catch error
+                console.error('Error loading adherence records:', error);
+                alert('Failed to load adherence records. Please try again later.');
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Management System</title>
+    <!-- Link to stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main navigation menu -->
+    <nav class="nav-menu">
+        <a href="index.html" class="active">Add Patient</a>
+        <a href="adherence.html">Add Adherence Record</a>
+        <a href="view-adherence.html">View Adherence Records</a>
+    </nav>
+
+    <!-- Main content container -->
+    <div class="container">
+        <h1>Add New Patient</h1>
+        
+        <!-- Patient creation form -->
+        <form action="/api/patients" method="POST" class="input-form">
+            <!-- First Name field -->
+            <div class="form-group">
+                <label for="firstName">First Name:</label>
+                <!-- Pattern ensures only letters and hyphens are allowed -->
+                <input type="text" 
+                       id="firstName" 
+                       name="firstName" 
+                       pattern="[a-zA-Z'-]+" 
+                       required 
+                       title="Only letters and hyphens allowed">
+            </div>
+
+            <!-- Last Name field -->
+            <div class="form-group">
+                <label for="lastName">Last Name:</label>
+                <!-- Pattern ensures only letters and hyphens are allowed -->
+                <input type="text" 
+                       id="lastName" 
+                       name="lastName" 
+                       pattern="[a-zA-Z'-]+" 
+                       required 
+                       title="Only letters and hyphens allowed">
+            </div>
+
+            <!-- Age field -->
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <!-- Min=0 ensures only positive numbers -->
+                <input type="number" 
+                       id="age" 
+                       name="age" 
+                       min="0" 
+                       required>
+            </div>
+
+            <!-- Email field -->
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <!-- Type=email ensures basic email validation -->
+                <input type="email" 
+                       id="email" 
+                       name="email" 
+                       required>
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit" class="submit-btn">Add Patient</button>
+        </form>
+
+        
+        <div id="message" class="message"></div>
+    </div>
+
+    <!-- Form submission feedback -->
+    <script>
+        // Get the form element
+        const form = document.querySelector('form');
+        const messageDiv = document.getElementById('message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent default form submission
+
+            try {
+                // Get form data
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                // Convert age to number
+                data.age = parseInt(data.age);
+
+                // Send POST request to backend
+                const response = await fetch('/api/patients', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    // Show success message and reset form
+                    messageDiv.textContent = 'Patient added successfully!';
+                    messageDiv.className = 'message success';
+                    form.reset();
+                } else {
+                    // Show error message
+                    messageDiv.textContent = 'Error adding patient. Please try again.';
+                    messageDiv.className = 'message error';
+                }
+            } catch (error) {
+                // Show error message for network/other errors
+                messageDiv.textContent = 'Error connecting to server. Please try again.';
+                messageDiv.className = 'message error';
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,6 +1,8 @@
 //Imports
-import com.sun.xml.internal.ws.util.StringUtils;
+package com.medicationadherence.model;
 import javafx.util.Pair;
+import org.apache.commons.lang3.StringUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,6 +23,7 @@ public class Patient{
     private int missedDoseNotis;
     private MedicationSchedule schedule;
     //Connection to mysql database
+    @JsonIgnore
     private Connection db = initializeDatabase();
     private int id;
 
@@ -48,7 +51,7 @@ public class Patient{
     public static Connection initializeDatabase(){
         Properties properties = new Properties();
         try{
-            properties.load(new FileInputStream(".idea/application.properties"));
+            properties.load(new FileInputStream("src/main/resources/application.properties"));
         } catch (IOException e) {
             throw new RuntimeException("Problem with application properties file/doesn't exist");
         }
@@ -253,6 +256,9 @@ public class Patient{
         }
         this.missedDoses = missedDoses;
     }
+    public int getId(){
+        return id;
+    }
 
     /**
      * Gets the adherence percentage of the patient
@@ -276,6 +282,11 @@ public class Patient{
      */
     public MedicationSchedule getSchedule() {
         return schedule;
+    }
+
+    // Add a method to get schedule medications in a serializable format
+    public Map<String, Map<String, Object>> getScheduleMedications() {
+        return schedule != null ? schedule.getMedications() : new HashMap<>();
     }
 }
 
@@ -320,6 +331,17 @@ class MedicationSchedule{
         medications.put(medicationName, new Pair<>(frequency, dosage));
     }
 
+    // Add getter for medications
+    public Map<String, Map<String, Object>> getMedications() {
+        Map<String, Map<String, Object>> result = new HashMap<>();
+        medications.forEach((name, pair) -> {
+            Map<String, Object> details = new HashMap<>();
+            details.put("frequency", pair.getKey().toString());
+            details.put("dosage", pair.getValue());
+            result.put(name, details);
+        });
+        return result;
+    }
 }
 enum Frequency{
     DAILY,WEEKLY;
@@ -327,6 +349,7 @@ enum Frequency{
      * Returns the name of the frequency with the first letter capitalized.
      * @return the capitalized name of the frequency
      */
+    @Override
     public String toString(){
         return StringUtils.capitalize(this.name());
     }

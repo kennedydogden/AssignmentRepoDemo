@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Adherence Record - Patient Management System</title>
+    <!-- Link to our stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main navigation menu -->
+    <nav class="nav-menu">
+        <a href="index.html">Add Patient</a>
+        <a href="adherence.html" class="active">Add Adherence Record</a>
+        <a href="view-adherence.html">View Adherence Records</a>
+    </nav>
+
+    <!-- Main content container -->
+    <div class="container">
+        <h1>Add Adherence Record</h1>
+
+        <!-- Patient selection section -->
+        <div class="form-group">
+            <label for="patientSelect">Select Patient:</label>
+            <select id="patientSelect" required>
+                <option value="">-- Select a patient --</option>
+                <!-- Patient options will be populated by JavaScript -->
+            </select>
+        </div>
+        
+        <!-- Adherence record form -->
+        <!-- The form action will be set by JavaScript based on selected patient -->
+        <form id="adherenceForm" class="input-form">
+            <!-- Medication name field -->
+            <div class="form-group">
+                <label for="medicationName">Medication Name:</label>
+                <!-- Pattern ensures only letters and spaces are allowed -->
+                <input type="text" 
+                       id="medicationName" 
+                       name="medicationName" 
+                       pattern="[a-zA-Z\s]+" 
+                       required 
+                       title="Only letters and spaces allowed">
+            </div>
+
+            <!-- Dosage field -->
+            <div class="form-group">
+                <label for="dosage">Dosage (mg):</label>
+                <!-- Min=0 ensures non-negative numbers -->
+                <input type="number" 
+                       id="dosage" 
+                       name="dosage" 
+                       min="0" 
+                       required>
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit" class="submit-btn">Add Record</button>
+        </form>
+
+        <!-- Success/Error message container -->
+        <div id="message" class="message"></div>
+    </div>
+
+    <!-- JavaScript for form handling and patient loading -->
+    <script>
+        // Get DOM elements
+        const patientSelect = document.getElementById('patientSelect');
+        const adherenceForm = document.getElementById('adherenceForm');
+        const messageDiv = document.getElementById('message');
+
+        // Load patients when page loads
+        window.addEventListener('load', async () => {
+            try {
+                // Fetch patients from backend
+                const response = await fetch('/api/patients');
+                if (!response.ok) throw new Error('Failed to fetch patients');
+                
+                const patients = await response.json();
+                
+                // Add patient options to select element
+                patients.forEach(patient => {
+                    const option = document.createElement('option');
+                    option.value = patient.id;
+                    option.textContent = `${patient.firstName} ${patient.lastName}`;
+                    patientSelect.appendChild(option);
+                });
+            } catch (error) {
+                messageDiv.textContent = 'Error loading patients. Please refresh the page.';
+                messageDiv.className = 'message error';
+            }
+        });
+
+        // Handle form submission
+        adherenceForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Check if a patient is selected
+            const patientId = patientSelect.value;
+            if (!patientId) {
+                messageDiv.textContent = 'Please select a patient';
+                messageDiv.className = 'message error';
+                return;
+            }
+
+            try {
+                // Get form data
+                const formData = new FormData(adherenceForm);
+                const data = Object.fromEntries(formData.entries());
+                
+                // Convert dosage to number
+                data.dosage = parseInt(data.dosage);
+
+                // Send POST request to backend
+                const response = await fetch(`/api/patients/${patientId}/adherence`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    // Show success message and reset form
+                    messageDiv.textContent = 'Adherence record added successfully!';
+                    messageDiv.className = 'message success';
+                    adherenceForm.reset();
+                } else {
+                    // Show error message
+                    messageDiv.textContent = 'Error adding adherence record. Please try again.';
+                    messageDiv.className = 'message error';
+                }
+            } catch (error) {
+                // Show error message for network/other errors
+                messageDiv.textContent = 'Error connecting to server. Please try again.';
+                messageDiv.className = 'message error';
+            }
+        });
+    </script>
+</body>
+</html> 
