@@ -25,14 +25,14 @@ The Medication Adherence Tracking System is a web-based application designed to 
 ## Technical Stack
 ### Backend
 - Java 8
-- Spring Boot 2.7.5
+- Spring Boot
 - MySQL Database
 - Maven for dependency management
 
 ### Frontend
 - HTML5
 - CSS3
-- JavaScript (Vanilla)
+- JavaScript
 - RESTful API integration
 
 
